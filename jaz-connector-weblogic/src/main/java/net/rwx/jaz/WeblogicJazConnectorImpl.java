@@ -112,7 +112,7 @@ public class WeblogicJazConnectorImpl extends JazConnector implements RemoteNoti
     System.out.println(" message = " + wln.getMessage() + "\n");
     }
     /**
-     * This function define how to read attribute from Weblogi instance.
+     * This function define how to read attribute from Weblogic instance.
      *
      * @param objectName MBean object's name which contain the attribute
      * @param attributesArray Attibute's names to read
