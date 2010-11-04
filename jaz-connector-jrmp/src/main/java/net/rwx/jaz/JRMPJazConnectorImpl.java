@@ -104,6 +104,12 @@ public class JRMPJazConnectorImpl extends JazConnector implements NotificationLi
     public List getAttributeList( String objectName, String[] attributesArray ) throws Exception
     {
         try {
+
+            if( this.mbeanserver == null )
+            {
+                // TODO : prÃ©voir une exception propre dans le cas d'une reconnexion
+                connect();
+            }
             
             AttributeList attributes = this.mbeanserver.getAttributes( new ObjectName(objectName), attributesArray );
             List attributesList = new ArrayList( attributes.size() );
@@ -115,7 +121,7 @@ public class JRMPJazConnectorImpl extends JazConnector implements NotificationLi
             return attributesList;
 
         } catch (ConnectException e) {
-            log.warn("Impossible de récupérer les Valeus");
+            log.warn("Unable to get values");
             connect();
             throw e;
         }

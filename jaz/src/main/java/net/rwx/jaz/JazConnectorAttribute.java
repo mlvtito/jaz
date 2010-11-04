@@ -37,6 +37,7 @@ public abstract class JazConnectorAttribute {
      * @return
      */
     // TODO : this method should be removed becaus it is specific to jrmp connector
+    // instead, we should pass JazQuery as a parameter of getValue
     public abstract String getValue( String field );
     
 }

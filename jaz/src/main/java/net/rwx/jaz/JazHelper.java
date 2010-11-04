@@ -63,7 +63,7 @@ public class JazHelper
                     canAttrName);
 
             Iterator it = queries.iterator();
-            while (it.hasNext()) {
+            while ( it.hasNext() ) {
                 JazQuery query = (JazQuery)it.next();
                 
                 // get statistic object with this query
@@ -74,7 +74,7 @@ public class JazHelper
                 
                 // update last value for this attribute into statistic object
                 int dot = fullAttrName.indexOf(46);
-                if (dot < 0)
+                if (dot < 0) // if it is not a composite data
                 {
                     stat.setValue( jmxAttr.getValue() );
                     stat.setTimeLastValue(stat.getTime());

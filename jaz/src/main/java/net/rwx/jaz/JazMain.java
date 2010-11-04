@@ -15,11 +15,13 @@ import org.kjkoster.zapcat.zabbix.ZabbixAgent;
  * This agent connect to remote JVM and listen to Zabbix requests to retreive
  * JVM attributes.
  *
- * It uses a JaZ connector to communicate with remote JVM. Connectors work as
- * plugin which is dynamically choosen in properties file.
- *
  * It is a multi-instances agent. It means that 1 JaZ agent can handle several
  * Zabbix agent (which is named listener) connected to several JVM via JMX.
+ *
+ * It uses a JaZ connector to communicate with remote JVM. Connectors work as
+ * plugin which is dynamically loaded from properties file. Every listeners for
+ * a JaZ agent share the same connector. For example, there is a connector for
+ * JRMP protocol and a connector for weblogic 8 t3 protocol.
  *
  * This class parse configuration file and start each listener.
  * 
@@ -42,7 +44,7 @@ public class JazMain extends Thread
         // get connector type
         String connectorImpl = JazConfig.getInstance().getConnectorImpl();
 
-        // parameter for constructor is 3 String
+        // parameter for connector constructor
         Class[] parametersType = new Class[ JazConnector.CONSTRUCTOR_NB_PARAMS ];
         for(int i=0; i < parametersType.length; i++ ) {
             parametersType[i] = String.class;
@@ -76,7 +78,9 @@ public class JazMain extends Thread
             String password = JazConfig.getInstance().getJvmPassword(instance);
 
             // populate connector constructor parameters
-            Object[] parameters = new Object[ JazConnector.CONSTRUCTOR_NB_PARAMS ];
+            Object[] parameters = new Object[ 
+                    JazConnector.CONSTRUCTOR_NB_PARAMS ];
+            
             parameters[0] = server;
             parameters[1] = portjvm;
             parameters[2] = instance;
@@ -84,7 +88,8 @@ public class JazMain extends Thread
             parameters[4] = password;
 
             try {
-                // instciate connector
+
+                // instanciate connector
                 Object obj = constructor.newInstance(parameters);
                 JazConnector connector = (JazConnector)obj;
                 JazHelper helper = new JazHelper( connector );
@@ -98,15 +103,22 @@ public class JazMain extends Thread
 
                 log.info("Start instance " + instance + " [" + port +
                         "] is mapped to " + server + "[" + portjvm + "]");
+
             }catch( InstantiationException ie ) {
+
                 log.error("Unable to initialize connector for instance "
                         + instance, ie);
+
             }catch( IllegalAccessException iae ) {
+
                 log.error("Unable to initialize connector for instance "
                         + instance, iae);
+
             }catch( InvocationTargetException ite ) {
+
                 log.error("Unable to initialize connector for instance "
                         + instance, ite);
+                
             }
         }
     }
