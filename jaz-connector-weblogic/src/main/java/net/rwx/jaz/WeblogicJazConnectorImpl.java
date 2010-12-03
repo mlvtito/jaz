@@ -21,7 +21,6 @@ import weblogic.jndi.Environment;
 import weblogic.management.MBeanHome;
 import weblogic.management.RemoteNotificationListener;
 import weblogic.management.logging.WebLogicLogNotification;
-import weblogic.management.runtime.LogBroadcasterRuntimeMBean;
 
 /**
  * Define how to connect a Weblogic 8 instance and read properties
@@ -104,12 +103,12 @@ public class WeblogicJazConnectorImpl extends JazConnector implements RemoteNoti
 
     public void handleNotification(Notification notification, Object handback) {
         WebLogicLogNotification wln = (WebLogicLogNotification)notification;
-    System.out.println("WebLogicLogNotification");
-    System.out.println(" type = " + wln.getType());
-    System.out.println(" message id = " + wln.getMessageId());
-    System.out.println(" server name = " + wln.getServername());
-    System.out.println(" timestamp = " + wln.getTimeStamp());
-    System.out.println(" message = " + wln.getMessage() + "\n");
+        System.out.println("WebLogicLogNotification");
+        System.out.println(" type = " + wln.getType());
+        System.out.println(" message id = " + wln.getMessageId());
+        System.out.println(" server name = " + wln.getServername());
+        System.out.println(" timestamp = " + wln.getTimeStamp());
+        System.out.println(" message = " + wln.getMessage() + "\n");
     }
     /**
      * This function define how to read attribute from Weblogic instance.
