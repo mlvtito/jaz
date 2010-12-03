@@ -81,19 +81,30 @@ public class JazQueryTest extends TestCase {
     }
 
     /**
-     * Test that ZabbixJMXQueryException is thrown when syntax is incorrect.
+     * Utility method to test multiple bad syntax
+     * @param strQuery
      */
-    public void testBadSyntax()
+    private void testUniqueBadSyntax( String strQuery )
     {
         try {
-            JazQuery query = new JazQuery(
-                    "jmx[java.lang:type=MemoryPool,name=PS Old Gen[Usage.used]"
-                    );
-
+            JazQuery query = new JazQuery( strQuery );
             fail("This should throw an exception");
         }catch( ZabbixJMXQueryException zjqe ) {
             assertNotNull(zjqe);
         }
+    }
+    
+    /**
+     * Test that ZabbixJMXQueryException is thrown when syntax is incorrect.
+     */
+    public void testBadSyntax()
+    {
+        testUniqueBadSyntax( "jmx java.lang][TEST]" );
+        testUniqueBadSyntax( "jmx [java.lang[TEST]" );
+        testUniqueBadSyntax( "jmx [java.lang]TEST]" );
+        testUniqueBadSyntax( "jmx [java.lang][TEST" );
+        testUniqueBadSyntax( "jmx java.langTEST" );
+        testUniqueBadSyntax( "jmx java.lang[TEST" );
     }
 
     /**
@@ -103,12 +114,12 @@ public class JazQueryTest extends TestCase {
     {
         try {
             JazQuery query = new JazQuery(
-                    "jmx[java.lang:var=${1},type=Runtime][VmVersion][VAR1]");
+                    "jmx[java.lang:var=${1},type=Runtime][Vm${1}Version${2}][VAR1][VAR2]");
 
             assertEquals( "java.lang:var=VAR1,type=Runtime",
                     query.getObjectName() );
-            assertEquals("VmVersion", query.getAttributeName() );
-            assertEquals( "VmVersion", query.getCanonicalAttributeName() );
+            assertEquals("VmVAR1VersionVAR2", query.getAttributeName() );
+            assertEquals( "VmVAR1VersionVAR2", query.getCanonicalAttributeName() );
         }catch( ZabbixJMXQueryException zjqe ) {
             fail("Query should be OK");
         }

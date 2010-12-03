@@ -32,26 +32,48 @@ public class JazQuery implements Comparable
             throw new ZabbixJMXQueryException(jazQuery, "This query is not a good type");
         }
 
-        // search for last bracket
-        int bracketOpen = jazQuery.lastIndexOf(91);
-        int bracketClose = jazQuery.lastIndexOf(93);
-
-        // check bracket position
-        if ((bracketOpen >= 0) && (bracketClose >= 0) && (bracketClose > bracketOpen + 1))
+        int iBracket = jazQuery.indexOf(91);
+        for (int iParam=-1; iBracket > 0; iParam++ )
         {
-            attributeName = jazQuery.substring(bracketOpen + 1, bracketClose);
-        }else {
-            throw new ZabbixJMXQueryException(jazQuery, "This query has no attribute name");
+            int bracketClose = jazQuery.indexOf( 93, iBracket );
+
+            String paramValue = null;
+            if( ( bracketClose > 0 ) && ( bracketClose > iBracket ) )
+            {
+                paramValue = jazQuery.substring( iBracket+1, bracketClose );
+            }
+
+            if( iParam == -1 ) // first param is object name
+            {
+                objectName = paramValue;
+            }
+            else if( iParam == 0 ) // second is attribute name
+            {
+                attributeName = paramValue;
+            }
+            else // others are param for object and attribute
+            {
+                objectName = objectName.replaceAll( "\\$\\{"+iParam+"\\}", paramValue );
+                attributeName = attributeName.replaceAll( "\\$\\{"+iParam+"\\}", paramValue );
+            }
+
+            if( ( bracketClose > 0 ) && ( bracketClose > iBracket ) )
+            {
+                iBracket = jazQuery.indexOf( 91, bracketClose );
+            }else
+            {
+                iBracket = -1;
+            }
         }
 
-        // search for first bracket
-        bracketClose = jazQuery.lastIndexOf(93, bracketOpen);
-        bracketOpen = jazQuery.indexOf(91);
-        if ((bracketOpen >= 0) && (bracketClose >= 0) && (bracketClose > bracketOpen + 1))
+        if( ( objectName == null ) || ( objectName.equals("") ) )
         {
-            objectName = jazQuery.substring(bracketOpen + 1, bracketClose);
-        }else {
-            throw new ZabbixJMXQueryException(jazQuery, "This query has no object name");
+            throw new ZabbixJMXQueryException(jazQuery, "Object name is empty");
+        }
+
+        if( ( attributeName == null ) || ( attributeName.equals("") ) )
+        {
+            throw new ZabbixJMXQueryException(jazQuery, "Attribute name is empty");
         }
   }
 
