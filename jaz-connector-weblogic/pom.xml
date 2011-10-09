@@ -35,7 +35,7 @@
   <dependencies>
     <dependency>
       <groupId>net.rwx</groupId>
-      <artifactId>jaz</artifactId>
+      <artifactId>jaz-core</artifactId>
       <version>1.0-SNAPSHOT</version>
     </dependency>
     <dependency>
