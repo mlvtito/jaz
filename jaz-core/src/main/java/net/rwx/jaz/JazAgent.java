@@ -45,16 +45,27 @@ public class JazAgent
             return "ZBX_NOTSUPPORTED";
         }
 
+        return getStatValue( jazquery );
+    }
+    
+    /**
+     * Get value for query if last value is out of date.
+     * 
+     * @param jazquery A parsed jaz query.
+     * @return Value for this query.
+     */
+    private String getStatValue( JazQuery jazquery ) 
+    {
         // get statistic object for this query
         JazQueryStatistic stat = queriesManager.get(jazquery);
 
         // if last value is outdated, get a new one
         if( stat.getTimeLastValue() <= stat.getTimeLastGet() )
         {
-            String objectName = jazquery.getObjectName();
-            try
+            try 
             {
-                jazHelper.query( objectName, queriesManager);
+                String objectName = jazquery.getObjectName();
+                jazHelper.query( objectName, queriesManager );
             } catch (ConnectException ce) {
                 return "";
             } catch (Exception e) {
@@ -64,7 +75,6 @@ public class JazAgent
 
         // update last get value
         stat.setTimeLastGet( stat.getTime() );
-        
         return stat.getValue();
     }
 }
